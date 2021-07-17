@@ -73,15 +73,16 @@ export const write = async (ctx) => {
 export const list = async (ctx) => {
   try {
     const todos = await Todo.find();
-    console.log(todos);
-    ctx.body = todos.map((todo) => {
-      return {
-        id: todo._id,
-        content: todo.content,
-        isCompleted: todo.isCompleted,
-        publishedDate: todo.publishedDate,
-      };
-    });
+    ctx.body = todos
+      .filter((todo) => todo.user._id == ctx.state.user._id)
+      .map((todo) => {
+        return {
+          id: todo._id,
+          content: todo.content,
+          isCompleted: todo.isCompleted,
+          publishedDate: todo.publishedDate,
+        };
+      });
   } catch (e) {
     ctx.throw(500, e);
   }
