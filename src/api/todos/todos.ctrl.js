@@ -52,6 +52,7 @@ export const write = async (ctx) => {
   const { content } = ctx.request.body;
   const todo = new Todo({
     content,
+    isCompleted: false,
     user: ctx.state.user,
   });
   try {
@@ -68,7 +69,11 @@ export const write = async (ctx) => {
 export const list = async (ctx) => {
   try {
     const todos = await Todo.find();
-    ctx.body = todos;
+    ctx.body = {
+      id: todos._id,
+      content: todos.content,
+      isCompleted: todos.isCompleted,
+    };
   } catch (e) {
     ctx.throw(500, e);
   }
@@ -125,6 +130,32 @@ export const update = async (ctx) => {
       return;
     }
     ctx.body = todo;
+  } catch (e) {
+    ctx.throw(500, e);
+  }
+};
+
+/*
+  PATCH /api/todos/complete/:id
+*/
+export const toggle = async (ctx) => {
+  const { id } = ctx.params;
+
+  const todo = await Todo.findById(id);
+
+  try {
+    const next = await Todo.findByIdAndUpdate(
+      id,
+      { isCompleted: !todo.isCompleted },
+      {
+        new: true,
+      },
+    ).exec();
+    if (!next) {
+      ctx.status = 404;
+      return;
+    }
+    ctx.body = next;
   } catch (e) {
     ctx.throw(500, e);
   }

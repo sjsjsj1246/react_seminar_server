@@ -4,7 +4,7 @@ import * as todosCtrl from './todos.ctrl';
 
 const todos = new Router();
 
-todos.get('/', todosCtrl.list);
+todos.get('/', checkLoggedIn, todosCtrl.list);
 todos.post('/', checkLoggedIn, todosCtrl.write);
 todos.get('/:id', todosCtrl.getTodoById, todosCtrl.read);
 todos.delete(
@@ -20,6 +20,13 @@ todos.patch(
   todosCtrl.getTodoById,
   todosCtrl.checkOwnTodo,
   todosCtrl.update,
+);
+todos.patch(
+  '/complete/:id',
+  checkLoggedIn,
+  todosCtrl.getTodoById,
+  todosCtrl.checkOwnTodo,
+  todosCtrl.toggle,
 );
 
 export default todos;
