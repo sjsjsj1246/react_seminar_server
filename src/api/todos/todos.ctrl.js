@@ -57,7 +57,11 @@ export const write = async (ctx) => {
   });
   try {
     await todo.save();
-    ctx.body = todo;
+    ctx.body = {
+      id: todo._id,
+      content: todo.content,
+      publishedDate: todo.publishedDate,
+    };
   } catch (e) {
     ctx.throw(500, e);
   }
@@ -69,11 +73,15 @@ export const write = async (ctx) => {
 export const list = async (ctx) => {
   try {
     const todos = await Todo.find();
-    ctx.body = {
-      id: todos._id,
-      content: todos.content,
-      isCompleted: todos.isCompleted,
-    };
+    console.log(todos);
+    ctx.body = todos.map((todo) => {
+      return {
+        id: todo._id,
+        content: todo.content,
+        isCompleted: todo.isCompleted,
+        publishedDate: todo.publishedDate,
+      };
+    });
   } catch (e) {
     ctx.throw(500, e);
   }
@@ -83,7 +91,12 @@ export const list = async (ctx) => {
   GET /api/todos/:id
 */
 export const read = async (ctx) => {
-  ctx.body = ctx.state.todo;
+  ctx.body = {
+    id: ctx.state.todo._id,
+    content: ctx.state.todo.content,
+    isCompleted: ctx.state.todo.isCompleted,
+    publishedDate: ctx.state.todo.publishedDate,
+  };
 };
 
 /*
@@ -129,7 +142,12 @@ export const update = async (ctx) => {
       ctx.status = 404;
       return;
     }
-    ctx.body = todo;
+    ctx.body = {
+      id: todo._id,
+      content: todo.content,
+      isCompleted: todo.isCompleted,
+      publishedDate: todo.publishedDate,
+    };
   } catch (e) {
     ctx.throw(500, e);
   }
@@ -155,7 +173,12 @@ export const toggle = async (ctx) => {
       ctx.status = 404;
       return;
     }
-    ctx.body = next;
+    ctx.body = {
+      id: next._id,
+      content: next.content,
+      isCompleted: next.isCompleted,
+      publishedDate: todo.publishedDate,
+    };
   } catch (e) {
     ctx.throw(500, e);
   }
